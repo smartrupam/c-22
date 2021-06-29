@@ -1,61 +1,73 @@
+var starImg, fairyImg, bgImg;
+var fairy , fairyVoice;
+var star, starBody;
+
 const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 
-var ground1,box1,box2,box3,paper1
-
 function preload()
 {
-	boximage = loadImage('box.png');
+	starImg = loadImage("images/star.png");
+	fairyImg = loadAnimation("images/fairyImage1.png","images/fairyImage2.png");
+	bgImg = loadImage("images/starNight.png");
+	fairyVoice = loadSound("sound/JoyMusic.mp3");
+
 }
 
 function setup() {
-	
-	
-	var canvas = createCanvas(1400, 700);
-	rectMode(CENTER);
+	createCanvas(800, 750);
+
+	fairyVoice.play();
+
+	fairy = createSprite(130, 520);
+	fairy.addAnimation("fairyflying",fairyImg);  
+	fairy.scale =0.25;
+
+	star = createSprite(650,30);
+	star.addImage(starImg);
+	star.scale = 0.2;
+
+
 	engine = Engine.create();
 	world = engine.world;
-	
 
+	starBody = Bodies.circle(650 , 30 , 5 , {restitution:0.5, isStatic:true});
+	World.add(world, starBody);
+	
+	Engine.run(engine);
 
-	
-	box1 = new Dustbin(1100,495,150,15);
-	box2 = new Dustbin(1185,420,15,170);
-	box3 = new Dustbin(1015,420,15,170);
-	
-	ground1 = new Ground(700,550,1400,30);
-	
-	paper1 = new Paper(200,300);
-	
-	 Engine.run(engine);
-  
 }
 
 
 function draw() {
-	background(64,217,202);
-	Engine.update(engine);
-	
-	
-	paper1.display();
-	ground1.display();
-	box3.display();
-	box1.display();
-	box2.display();
-	image(boximage,1000,330,200,200);
-	paper1.display();
-	
- 
+  background(bgImg);
+
+  star.x= starBody.position.x 
+  star.y= starBody.position.y 
+
+  console.log(star.y);
+
+  if(star.y > 470 && starBody.position.y > 470 ){
+  	Matter.Body.setStatic(starBody,true);
+  }
+
+  drawSprites();
+
 }
 
-	function keyPressed()	{
-		if(keyCode===UP_ARROW)	{
-			Matter.Body.applyForce(paper1.body,paper1.body.position,{x:110,y:-110});
+function keyPressed() {
 
-		}
+	if(keyCode === RIGHT_ARROW){
+           fairy.x = fairy.x + 20;
+	}
+	
+        if(keyCode === LEFT_ARROW){
+           fairy.x = fairy.x - 20;
 	}
 
-
-
+	if (keyCode === DOWN_ARROW) {
+		Matter.Body.setStatic(starBody,false); 
+	}
+}
